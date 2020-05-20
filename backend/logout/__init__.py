@@ -21,7 +21,6 @@ mongo = MongoClient(MONGO_CONN_STR)                       # Server
 db = mongo.easycredit                                     # Database
 users, sessions = db.users, db.sessions                   # Collections
 
-
 def response(body=SUCCESS, status_code=200):
     return func.HttpResponse(json.dumps(body), status_code=status_code)
 
@@ -41,36 +40,11 @@ def get_user_by(phone):
 
 # THIS FUNCTION
 
-def get_user(email, password):
-    logging.info(f'Login request {email}:{password}')
-    
-    from_db = users.find_one({'email': email, 'password': password})
-    if not from_db:
-        return None
-    return {
-        'id': str(from_db['_id']), 
-        'email': from_db['email']
-        }
-
-def login(user):
-    logging.info(f"Logging in user: {user['id']}")
-    active_session = logged_in(user)
-    if active_session:
-        logging.info(f"Already logged in: {user['id']}")
-        return active_session
-    else:
-        session = sessions.insert_one({'userId': user['id']})
-        logging.info(f"Logged in: {user['id']}")
-        return str(session.inserted_id)
+def logout(session_id):
+    sessions.delete_one({'_id': ObjectId(session_id)})
+    logging.info(f'Logged out {session_id}')
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    email = req.params.get('email')
-    password = req.params.get('password')
-    
-    user = get_user(email, password)
-    logging.info(user)
-    if not user:
-        return response(NOT_FOUND, 404)
-
-    user['session_id'] = login(user)
-    return response(user)
+    session_id = req.params.get('session_id')
+    logout(session_id)
+    return response()
