@@ -6,7 +6,7 @@ import azure.functions as func
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-# COMMON UTILS 
+# COMMON UTILS
 
 env = os.environ
 if 'MONGO_CONN_STR' not in env:
