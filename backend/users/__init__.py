@@ -48,10 +48,22 @@ def get_user(id):
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     user_id = req.params.get('id')
-    
-    user = get_user(user_id)
-    if not user:
-        return response(NOT_FOUND, 404)
-    del user['_id']
-    user['id'] = user_id
-    return response(user)
+    phone = req.params.get('phone')
+
+    if user_id:
+        user = get_user(user_id)
+        if not user:
+            return response(NOT_FOUND, 404)
+        del user['_id']
+        user['id'] = user_id
+        return response(user)
+
+    if phone:
+        user = get_user_by(phone)
+        if not user:
+            return response(NOT_FOUND, 404)
+        user['id'] = str(user['_id'])
+        del user['_id']
+        return response(user)
+
+    return response({'message': 'Missing required query parameter.'}, 400)
