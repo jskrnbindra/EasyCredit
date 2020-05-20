@@ -40,36 +40,24 @@ def get_user_by(phone):
 
 # THIS FUNCTION
 
-def get_user(email, password):
-    logging.info(f'Login request {email}:{password}')
+def signup(name, email, phone, password):
+    logging.info(f'Sign up: {name} {phone}')
+    return users.insert_one({
+        'name': name, 
+        'email': email,
+        'phone': phone,
+        'password': password
+        }).inserted_id
     
-    from_db = users.find_one({'email': email, 'password': password})
-    if not from_db:
-        return None
-    return {
-        'id': str(from_db['_id']), 
-        'email': from_db['email']
-        }
-
-def login(user):
-    logging.info(f"Logging in user: {user['id']}")
-    active_session = logged_in(user)
-    if active_session:
-        logging.info(f"Already logged in: {user['id']}")
-        return active_session
-    else:
-        session = sessions.insert_one({'userId': user['id']})
-        logging.info(f"Logged in: {user['id']}")
-        return str(session.inserted_id)
-
 def main(req: func.HttpRequest) -> func.HttpResponse:
+    name = req.params.get('name')
     email = req.params.get('email')
+    phone = req.params.get('phone')
     password = req.params.get('password')
     
-    user = get_user(email, password)
-    logging.info(user)
-    if not user:
-        return response(NOT_FOUND, 404)
+    user_exists = get_user_by(phone)
+    if user_exists:
+        return response(ALREADY_EXISTS, 309)
 
-    user['session_id'] = login(user)
-    return response(user)
+    logging.info(f'New user created: {signup(name, email, phone, password)}')
+    return response()
