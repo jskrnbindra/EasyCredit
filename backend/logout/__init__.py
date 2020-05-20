@@ -14,7 +14,8 @@ if 'MONGO_CONN_STR' not in env:
 
 MONGO_CONN_STR = env['MONGO_CONN_STR']
 SUCCESS={'message':'success'}
-NOT_FOUND = {'message':'Invalid email or password.'}
+INVALID_CREDS = {'message':'Invalid email or password.'}
+NOT_FOUND = {'message':'Resource not found.'}
 ALREADY_EXISTS = {'message':'User with that phone number exists already.'}
 
 mongo = MongoClient(MONGO_CONN_STR)                       # Server

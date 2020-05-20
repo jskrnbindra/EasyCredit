@@ -42,35 +42,16 @@ def get_user_by(phone):
 
 # THIS FUNCTION
 
-def get_user(email, password):
-    logging.info(f'Login request {email}:{password}')
-    
-    from_db = users.find_one({'email': email, 'password': password})
-    if not from_db:
-        return None
-    return {
-        'id': str(from_db['_id']), 
-        'email': from_db['email']
-        }
-
-def login(user):
-    logging.info(f"Logging in user: {user['id']}")
-    active_session = logged_in(user)
-    if active_session:
-        logging.info(f"Already logged in: {user['id']}")
-        return active_session
-    else:
-        session = sessions.insert_one({'userId': user['id']})
-        logging.info(f"Logged in: {user['id']}")
-        return str(session.inserted_id)
+def get_user(id):
+    logging.info(f'Getting user by id: {id}')
+    return users.find_one({'_id': ObjectId(id)})
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    email = req.params.get('email')
-    password = req.params.get('password')
+    user_id = req.params.get('id')
     
-    user = get_user(email, password)
+    user = get_user(user_id)
     if not user:
-        return response(INVALID_CREDS, 404)
-
-    user['session_id'] = login(user)
+        return response(NOT_FOUND, 404)
+    del user['_id']
+    user['id'] = user_id
     return response(user)
