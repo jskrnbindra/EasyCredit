@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">EasyCredit</string>
+    <!-- Strings related to login -->
+    <string name="prompt_phone">phone</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Invalid phone or password"</string>
+    <string name="base_url">"https://easycredit.azurewebsites.net/api"</string>
+    <string name="login_func_key">"varJN11XzED/ZyGtrFWfh0fTSmG7rDAl3KZG6G6aC/KlR0vQ/IUcRg=="</string>
+    <string name="signup_func_key">"AES7dO0IYSGe2SDoe5auPWaOYAPavt8FbJBUc2uEq71SyUloTdaOdA=="</string>
+    <string name="logout_func_key">"26zuwoaFcdLwA61WG9eFCZALtuHasKbCFVHMuC8PaCtRcOHYL2GWJA=="</string>
+    <string name="users_func_key">"c2cYeYyXD3x0fUcvEPjxp5NvlFIxjrQREOJNUhzTRPBWBfcmoAqpPQ=="</string>
+</resources>
