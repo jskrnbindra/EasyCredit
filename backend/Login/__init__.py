@@ -14,7 +14,7 @@ if 'MONGO_CONN_STR' not in env:
 
 MONGO_CONN_STR = env['MONGO_CONN_STR']
 SUCCESS={'message':'success'}
-INVALID_CREDS = {'message':'Invalid email or password.'}
+INVALID_CREDS = {'message':'Invalid phone or password.'}
 NOT_FOUND = {'message':'Resource not found.'}
 ALREADY_EXISTS = {'message':'User with that phone number exists already.'}
 
@@ -42,15 +42,15 @@ def get_user_by(phone):
 
 # THIS FUNCTION
 
-def get_user(email, password):
-    logging.info(f'Login request {email}:{password}')
+def get_user(phone, password):
+    logging.info(f'Login request {phone}:{password}')
     
-    from_db = users.find_one({'email': email, 'password': password})
+    from_db = users.find_one({'phone': phone, 'password': password})
     if not from_db:
         return None
     return {
         'id': str(from_db['_id']), 
-        'email': from_db['email']
+        'phone': from_db['phone']
         }
 
 def login(user):
@@ -65,10 +65,10 @@ def login(user):
         return str(session.inserted_id)
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    email = req.params.get('email')
+    phone = req.params.get('phone')
     password = req.params.get('password')
     
-    user = get_user(email, password)
+    user = get_user(phone, password)
     if not user:
         return response(INVALID_CREDS, 404)
 
