@@ -14,4 +14,9 @@
     <string name="signup_func_key">"AES7dO0IYSGe2SDoe5auPWaOYAPavt8FbJBUc2uEq71SyUloTdaOdA=="</string>
     <string name="logout_func_key">"26zuwoaFcdLwA61WG9eFCZALtuHasKbCFVHMuC8PaCtRcOHYL2GWJA=="</string>
     <string name="users_func_key">"c2cYeYyXD3x0fUcvEPjxp5NvlFIxjrQREOJNUhzTRPBWBfcmoAqpPQ=="</string>
+    <string name="user_id_extra">"com.easycredit.userId"</string>
+    <string name="session_id_extra">"com.easycredit.sessionId"</string>
+
+    <!--    Menu items  -->
+    <string name="sign_out_menu_item">Sign out</string>
 </resources>

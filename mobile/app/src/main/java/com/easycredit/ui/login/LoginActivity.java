@@ -1,5 +1,7 @@
 package com.easycredit.ui.login;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.easycredit.R;
 import com.easycredit.data.Http;
+import com.easycredit.ui.home.HomeActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void performLogin() {
         loadingProgressBar.setVisibility(View.VISIBLE);
+        loginButton.setActivated(false);
         msgTextView.setVisibility(View.GONE);
         Log.i(this.getClass().toString(), "here in login");
         String phone = usernameEditText.getText().toString();
@@ -115,23 +119,47 @@ public class LoginActivity extends AppCompatActivity {
                 phone, password,
                 getString(R.string.login_func_key));
 
-        Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(url, null,
+                loginDone(this), loginFailed());
+        http.add(request);
+    }
+
+    private Response.Listener<JSONObject> loginDone(final Context ctx) {
+        return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i(this.getClass().toString(), "login response ->" + response.toString());
 
+                String userId = "error";
+                String phone = "error";
+                String sessionId = "error";
                 try {
-                    loadingProgressBar.setVisibility(View.GONE);
-                    msgTextView.setText(String.format("Logged in: %s", response.getString("id")));
-                    msgTextView.setTextColor(0xff00ff00);
-                    msgTextView.setVisibility(View.VISIBLE);
+                    userId = response.getString("id");
+                    phone = response.getString("phone");
+                    sessionId = response.getString("sessionId");
                 } catch (JSONException e) {
                     Log.e(this.getClass().toString(), "failed to get from JSON");
+                    msgTextView.setText("Failed to get from JSON");
+                    msgTextView.setText("Unexpected error");
+                    msgTextView.setTextColor(0xffff0000);
+                    loadingProgressBar.setVisibility(View.GONE);
+                    loginButton.setActivated(true);
+                    msgTextView.setVisibility(View.VISIBLE);
+                    return;
                 }
+                loadingProgressBar.setVisibility(View.GONE);
+                loginButton.setActivated(true);
+
+                Intent showHomeScreen = new Intent(ctx, HomeActivity.class);
+                showHomeScreen.putExtra(getString(R.string.user_id_extra), userId);
+                showHomeScreen.putExtra(getString(R.string.session_id_extra), sessionId);
+                startActivity(showHomeScreen);
             }
         };
+    }
 
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
+    private Response.ErrorListener loginFailed() {
+        return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.i(this.getClass().toString(), "login failed " + error.getMessage());
@@ -139,10 +167,9 @@ public class LoginActivity extends AppCompatActivity {
                 msgTextView.setText(getString(R.string.login_failed));
                 msgTextView.setTextColor(0xffff0000);
                 loadingProgressBar.setVisibility(View.GONE);
+                loginButton.setActivated(true);
                 msgTextView.setVisibility(View.VISIBLE);
             }
         };
-        JsonObjectRequest request = new JsonObjectRequest(url, null, listener, errorListener);
-        http.add(request);
     }
 }
