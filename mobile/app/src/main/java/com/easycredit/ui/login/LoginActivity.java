@@ -31,6 +31,8 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LoginActivity";
+
     private LoginViewModel loginViewModel;
     public static Http http;
 
@@ -110,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         loadingProgressBar.setVisibility(View.VISIBLE);
         loginButton.setEnabled(false);
         msgTextView.setVisibility(View.GONE);
-        Log.i(this.getClass().toString(), "here in login");
+        Log.d(TAG, "in login");
         String phone = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
