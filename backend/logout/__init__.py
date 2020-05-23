@@ -46,6 +46,6 @@ def logout(session_id):
     logging.info(f'Logged out {session_id}')
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    session_id = req.params.get('session_id')
+    session_id = req.params.get('sessionId')
     logout(session_id)
     return response()

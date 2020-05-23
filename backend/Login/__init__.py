@@ -72,5 +72,5 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if not user:
         return response(INVALID_CREDS, 404)
 
-    user['session_id'] = login(user)
+    user['sessionId'] = login(user)
     return response(user)
