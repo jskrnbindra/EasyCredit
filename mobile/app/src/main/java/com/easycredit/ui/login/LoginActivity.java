@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void performLogin() {
         loadingProgressBar.setVisibility(View.VISIBLE);
-        loginButton.setActivated(false);
+        loginButton.setEnabled(false);
         msgTextView.setVisibility(View.GONE);
         Log.i(this.getClass().toString(), "here in login");
         String phone = usernameEditText.getText().toString();
@@ -143,17 +143,19 @@ public class LoginActivity extends AppCompatActivity {
                     msgTextView.setText("Unexpected error");
                     msgTextView.setTextColor(0xffff0000);
                     loadingProgressBar.setVisibility(View.GONE);
-                    loginButton.setActivated(true);
+                    loginButton.setEnabled(true);
                     msgTextView.setVisibility(View.VISIBLE);
                     return;
                 }
                 loadingProgressBar.setVisibility(View.GONE);
-                loginButton.setActivated(true);
+                loginButton.setEnabled(true);
 
                 Intent showHomeScreen = new Intent(ctx, HomeActivity.class);
                 showHomeScreen.putExtra(getString(R.string.user_id_extra), userId);
                 showHomeScreen.putExtra(getString(R.string.session_id_extra), sessionId);
+                showHomeScreen.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(showHomeScreen);
+                finish();
             }
         };
     }
@@ -162,12 +164,12 @@ public class LoginActivity extends AppCompatActivity {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i(this.getClass().toString(), "login failed " + error.getMessage());
+                Log.i(this.getClass().toString(), "login failed " + error);
 
                 msgTextView.setText(getString(R.string.login_failed));
                 msgTextView.setTextColor(0xffff0000);
                 loadingProgressBar.setVisibility(View.GONE);
-                loginButton.setActivated(true);
+                loginButton.setEnabled(true);
                 msgTextView.setVisibility(View.VISIBLE);
             }
         };
