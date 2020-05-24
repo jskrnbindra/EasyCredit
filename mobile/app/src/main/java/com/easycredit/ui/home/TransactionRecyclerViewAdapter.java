@@ -1,4 +1,4 @@
-package com.easycredit;
+package com.easycredit.ui.home;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,11 +10,10 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.easycredit.R;
 import com.easycredit.data.model.UserTransaction;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,6 +47,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         holder.amount.setText(""+mTransactions.get(position).getAmount());
         SimpleDateFormat format = new SimpleDateFormat("MMM d", Locale.US);
         holder.timestamp.setText(format.format(mTransactions.get(position).getTimestamp()));
+        holder.status.setText(mTransactions.get(position).getStatus().name());
     }
 
     @Override
@@ -60,6 +60,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         private TextView beneficiaryName;
         private TextView timestamp;
         private TextView amount;
+        private TextView status;
         private LinearLayout transactionListItem;
 
         public ViewHolder(View view) {
@@ -68,6 +69,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
             beneficiaryName = view.findViewById(R.id.beneficiaryName);
             timestamp = view.findViewById(R.id.timestamp);
             amount = view.findViewById(R.id.amount);
+            status = view.findViewById(R.id.status);
             transactionListItem = view.findViewById(R.id.transactionListItem);
         }
     }

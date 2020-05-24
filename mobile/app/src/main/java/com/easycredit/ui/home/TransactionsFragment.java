@@ -1,4 +1,4 @@
-package com.easycredit;
+package com.easycredit.ui.home;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,10 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.easycredit.R;
+import com.easycredit.data.enums.TransactionStatus;
 import com.easycredit.data.model.EasyCreditUser;
 import com.easycredit.data.model.UserTransaction;
 
@@ -58,20 +59,44 @@ public class TransactionsFragment extends Fragment {
     {
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "HezHabibi@gmail.com",
-                "Hez Habibi", "9988998899"), 499, new Date()));
+                "Hez Habibi", "9988998899"), 499, new Date(), TransactionStatus.DONE));
 
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date()));
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.PENDING));
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date()));
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date()));
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.EXPIRED));
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date()));
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.PENDING));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.EXPIRED));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.PENDING));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.EXPIRED));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
     }
 
 }

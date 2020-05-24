@@ -1,9 +1,6 @@
 package com.easycredit.ui.home;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,8 +19,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.easycredit.R;
-import com.easycredit.TransactionRecyclerViewAdapter;
-import com.easycredit.data.model.UserTransaction;
 import com.easycredit.ui.send.SendMoneyActivity;
 import com.easycredit.data.Http;
 import com.easycredit.data.model.EasyCreditUser;
@@ -31,10 +26,6 @@ import com.easycredit.ui.login.LoginActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -44,6 +35,7 @@ public class HomeActivity extends AppCompatActivity {
     private String userId = "noUser";
     private String sessionId = "noSession";
     private ProgressBar topProgressBar;
+    private Button refreshButton;
     private EasyCreditUser user;
 
     private TextView welcomeText;
@@ -66,6 +58,7 @@ public class HomeActivity extends AppCompatActivity {
         sessionId = intent.getStringExtra(getString(R.string.session_id_extra));
         topProgressBar = findViewById(R.id.progressBar);
         welcomeText = findViewById(R.id.welcome);
+        refreshButton = findViewById(R.id.refreshButton);
 
         populateUserDetails();
         Button sendMoneyButton = findViewById(R.id.sendMoneyButton);
@@ -75,6 +68,23 @@ public class HomeActivity extends AppCompatActivity {
                 Intent sendMoneyIntent = new Intent(getApplicationContext(), SendMoneyActivity.class);
                 sendMoneyIntent.putExtra(getString(R.string.user_id_extra), userId);
                 startActivity(sendMoneyIntent);
+            }
+        });
+
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "Refresh here");
+                refreshButton.setEnabled(false);
+                topProgressBar.setVisibility(View.VISIBLE);
+
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                refreshButton.setEnabled(true);
+                topProgressBar.setVisibility(View.GONE);
             }
         });
     }

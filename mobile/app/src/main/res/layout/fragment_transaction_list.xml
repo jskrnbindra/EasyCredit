@@ -6,9 +6,9 @@
     android:name="com.easycredit.TransactionFragments"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
+    android:layout_marginLeft="30dp"
+    android:layout_marginRight="30dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".TransactionsFragment"
+    tools:context=".ui.home.TransactionsFragment"
     tools:listitem="@layout/fragment_transaction" >
 </androidx.recyclerview.widget.RecyclerView>
