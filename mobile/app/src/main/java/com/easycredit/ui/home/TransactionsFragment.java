@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,13 +25,16 @@ import java.util.List;
  * A fragment representing a list of Items.
  * <p/>
  */
-public class TransactionsFragment extends Fragment {
+public class TransactionsFragment extends Fragment implements HomeActivity.RefreshButtonListener {
 
     private static final String TAG = "TransactionsFragment";
 
     private List<UserTransaction> transactions = new ArrayList<>();
+    private TransactionRecyclerViewAdapter transactionAdapter;
+
 
     public TransactionsFragment() {
+        HomeActivity.setRefreshButtonListener(this);
     }
 
     public static TransactionsFragment newInstance() {
@@ -45,12 +49,12 @@ public class TransactionsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_transaction_list, container, false);
         populateTransactions();
-
+        Context context = view.getContext();
+        transactionAdapter = new TransactionRecyclerViewAdapter(context, transactions);
         if (view instanceof RecyclerView) {
-            Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new TransactionRecyclerViewAdapter(context, transactions));
+            recyclerView.setAdapter(transactionAdapter);
         }
         return view;
     }
@@ -99,4 +103,13 @@ public class TransactionsFragment extends Fragment {
                 "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
     }
 
+    @Override
+    public void refreshButtonClicked() {
+        Toast.makeText(getActivity(),"Refresh button clicked", Toast.LENGTH_LONG).show();
+        transactions.add(0, new UserTransaction(new EasyCreditUser("blah-blah-blah",
+                "blabla@gmail.com",
+                "Bla bla", "9988"), -200, new Date(), TransactionStatus.DONE));
+        transactionAdapter.notifyDataSetChanged();
+
+    }
 }

@@ -39,12 +39,17 @@ public class HomeActivity extends AppCompatActivity {
     private EasyCreditUser user;
 
     private TextView welcomeText;
+    private static RefreshButtonListener refreshButtonListener;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.topmenu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public static void setRefreshButtonListener(RefreshButtonListener listener) {
+        refreshButtonListener = listener;
     }
 
     @Override
@@ -85,6 +90,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 refreshButton.setEnabled(true);
                 topProgressBar.setVisibility(View.GONE);
+                refreshButtonListener.refreshButtonClicked();
             }
         });
     }
@@ -169,5 +175,9 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(ctx, requestName + " out failed!", Toast.LENGTH_LONG).show();
             }
         };
+    }
+
+    public interface RefreshButtonListener{
+        void refreshButtonClicked();
     }
 }
