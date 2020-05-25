@@ -3,7 +3,6 @@
     android:id="@+id/transactionListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginRight="40dp"
     android:orientation="horizontal">
 
     <LinearLayout

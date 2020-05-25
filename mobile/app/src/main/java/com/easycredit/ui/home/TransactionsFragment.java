@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,11 +62,23 @@ public class TransactionsFragment extends Fragment implements HomeActivity.Refre
     {
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "HezHabibi@gmail.com",
-                "Hez Habibi", "9988998899"), 499, new Date(), TransactionStatus.DONE));
+                "Hez Habibi", "9988998899"), 499, new Date(1590423701), TransactionStatus.DONE));
 
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.PENDING));
+                "B Rubina", "9988775599"), -200, new Date(1590422701), TransactionStatus.PENDING));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(1590323701), TransactionStatus.DONE));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(1590403701), TransactionStatus.EXPIRED));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(1589423701), TransactionStatus.DONE));
+        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
+                "begumrubina@gmail.com",
+                "B Rubina", "9988775599"), -200, new Date(1590400701), TransactionStatus.PENDING));
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "begumrubina@gmail.com",
                 "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
@@ -79,19 +90,7 @@ public class TransactionsFragment extends Fragment implements HomeActivity.Refre
                 "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.PENDING));
-        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
-                "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
-        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
-                "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.EXPIRED));
-        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
-                "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
-        transactions.add(new UserTransaction(new EasyCreditUser("some-id",
-                "begumrubina@gmail.com",
-                "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.PENDING));
+                "B Rubina", "9988775599"), -200, new Date(1590423701), TransactionStatus.PENDING));
         transactions.add(new UserTransaction(new EasyCreditUser("some-id",
                 "begumrubina@gmail.com",
                 "B Rubina", "9988775599"), -200, new Date(), TransactionStatus.DONE));
@@ -105,11 +104,6 @@ public class TransactionsFragment extends Fragment implements HomeActivity.Refre
 
     @Override
     public void refreshButtonClicked() {
-        Toast.makeText(getActivity(),"Refresh button clicked", Toast.LENGTH_LONG).show();
-        transactions.add(0, new UserTransaction(new EasyCreditUser("blah-blah-blah",
-                "blabla@gmail.com",
-                "Bla bla", "9988"), -200, new Date(), TransactionStatus.DONE));
         transactionAdapter.notifyDataSetChanged();
-
     }
 }

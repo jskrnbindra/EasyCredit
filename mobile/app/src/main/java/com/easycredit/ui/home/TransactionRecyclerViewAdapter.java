@@ -13,9 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.easycredit.R;
 import com.easycredit.data.model.UserTransaction;
 
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
+import static android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
+import static android.text.format.DateUtils.FORMAT_NO_YEAR;
+import static android.text.format.DateUtils.formatDateTime;
+import static android.text.format.DateUtils.isToday;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link UserTransaction}..
@@ -43,11 +47,22 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Log.i(TAG, "onBindViewHolder: called");
 
-        holder.beneficiaryName.setText(mTransactions.get(position).getBeneficiary().getDisplayName());
-        holder.amount.setText(""+mTransactions.get(position).getAmount());
-        SimpleDateFormat format = new SimpleDateFormat("MMM d", Locale.US);
-        holder.timestamp.setText(format.format(mTransactions.get(position).getTimestamp()));
-        holder.status.setText(mTransactions.get(position).getStatus().name());
+        int amount = mTransactions.get(position).getAmount();
+        int red = 0xFFFF0000;
+        int green = 0xFF00FF00;
+        String beneficiaryName = mTransactions.get(position).getBeneficiary().getDisplayName();
+        String status = mTransactions.get(position).getStatus().name();
+        Date timestamp = mTransactions.get(position).getTimestamp();
+        String relativeTime = formatDateTime(null, timestamp.getTime(),
+                FORMAT_ABBREV_MONTH | FORMAT_NO_YEAR);
+        String timeString = isToday(timestamp.getTime()) ? "Today" : relativeTime;
+
+        holder.amount.setTextColor(amount < 0 ? red : green);
+
+        holder.beneficiaryName.setText(beneficiaryName);
+        holder.amount.setText(String.valueOf(amount));
+        holder.timestamp.setText(timeString);
+        holder.status.setText(status);
     }
 
     @Override
