@@ -41,7 +41,7 @@
     <fragment
         android:id="@+id/transactionsRVFragment"
         android:name="com.easycredit.ui.home.TransactionsFragment"
-        android:layout_width="411dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
