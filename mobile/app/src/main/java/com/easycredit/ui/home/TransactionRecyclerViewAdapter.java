@@ -22,18 +22,16 @@ import static android.text.format.DateUtils.formatDateTime;
 import static android.text.format.DateUtils.isToday;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link UserTransaction}..
+ * {@link RecyclerView.Adapter} that can display a {@link UserTransaction}.
  */
 public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<TransactionRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "TransactionRecyclerView";
 
     private final List<UserTransaction> mTransactions;
-    private Context context;
 
     public TransactionRecyclerViewAdapter(Context ctx, List<UserTransaction> items) {
         mTransactions = items;
-        context = ctx;
     }
 
     @Override
@@ -50,7 +48,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         int amount = mTransactions.get(position).getAmount();
         int red = 0xFFFF0000;
         int green = 0xFF00FF00;
-        String beneficiaryName = mTransactions.get(position).getBeneficiary().getDisplayName();
+        String beneficiaryName = mTransactions.get(position).getBeneficiaryName();
         String status = mTransactions.get(position).getStatus().name();
         Date timestamp = mTransactions.get(position).getTimestamp();
         String relativeTime = formatDateTime(null, timestamp.getTime(),

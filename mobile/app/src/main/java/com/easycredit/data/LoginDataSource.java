@@ -25,7 +25,7 @@ public class LoginDataSource {
             Log.i(this.getClass().toString(), "here in login inner");
 
             LoggedInUser fakeUser =
-                    new LoggedInUser(new EasyCreditUser("","","",""), "email");
+                    new LoggedInUser(new EasyCreditUser("","","","", null), "email");
             return new Result.Success<>(fakeUser);
         } catch (Exception e) {
             return new Result.Error(new IOException("Error logging in", e));

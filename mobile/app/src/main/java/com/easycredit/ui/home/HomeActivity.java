@@ -23,13 +23,14 @@ import com.easycredit.ui.send.SendMoneyActivity;
 import com.easycredit.data.Http;
 import com.easycredit.data.model.EasyCreditUser;
 import com.easycredit.ui.login.LoginActivity;
+import com.google.gson.Gson;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class HomeActivity extends AppCompatActivity {
 
     private static final String TAG = "HomeActivity";
+    private static final Gson GSON = new Gson();
 
     private Http http;
     private String userId = "noUser";
@@ -40,6 +41,31 @@ public class HomeActivity extends AppCompatActivity {
 
     private TextView welcomeText;
     private static RefreshButtonListener refreshButtonListener;
+
+
+    // Listeners
+
+    private View.OnClickListener refreshBtnListener =  new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            refreshButton.setEnabled(false);
+            topProgressBar.setVisibility(View.VISIBLE);
+
+            refreshButtonListener.refreshButtonClicked();
+
+            refreshButton.setEnabled(true);
+            topProgressBar.setVisibility(View.GONE);
+        }
+    };
+
+    private View.OnClickListener sendMoneyListener =  new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent sendMoneyIntent = new Intent(getApplicationContext(), SendMoneyActivity.class);
+            sendMoneyIntent.putExtra(getString(R.string.user_id_extra), userId);
+            startActivity(sendMoneyIntent);
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,33 +92,11 @@ public class HomeActivity extends AppCompatActivity {
         refreshButton = findViewById(R.id.refreshButton);
 
         populateUserDetails();
+
         Button sendMoneyButton = findViewById(R.id.sendMoneyButton);
-        sendMoneyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent sendMoneyIntent = new Intent(getApplicationContext(), SendMoneyActivity.class);
-                sendMoneyIntent.putExtra(getString(R.string.user_id_extra), userId);
-                startActivity(sendMoneyIntent);
-            }
-        });
+        sendMoneyButton.setOnClickListener(sendMoneyListener);
 
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "Refresh here");
-                refreshButton.setEnabled(false);
-                topProgressBar.setVisibility(View.VISIBLE);
-
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                refreshButton.setEnabled(true);
-                topProgressBar.setVisibility(View.GONE);
-                refreshButtonListener.refreshButtonClicked();
-            }
-        });
+        refreshButton.setOnClickListener(refreshBtnListener);
     }
 
     @Override
@@ -114,7 +118,7 @@ public class HomeActivity extends AppCompatActivity {
                 getString(R.string.users_func_key), userId);
 
         JsonObjectRequest request = new JsonObjectRequest(url, null,
-                userFetched(this), requestFailed(this, "getUser"));
+                userFetched(), requestFailed(this, "getUser"));
         http.add(request);
     }
 
@@ -132,19 +136,15 @@ public class HomeActivity extends AppCompatActivity {
 
     // Callbacks
 
-    private Response.Listener<JSONObject> userFetched(final Context ctx)
+    private Response.Listener<JSONObject> userFetched()
     {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.i(this.getClass().toString(), "User fetched -> " + userId);
+                user = GSON.fromJson(response.toString(), EasyCreditUser.class);
+                Log.d(this.getClass().toString(), "User fetched -> " + user);
+                String displayName = user.getName();
                 topProgressBar.setVisibility(View.GONE);
-                String displayName = "error";
-                try {
-                    displayName = response.getString("name");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
                 welcomeText.setText(displayName);
             }
         };
@@ -172,10 +172,12 @@ public class HomeActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.e(this.getClass().toString(), requestName + " failed: " + error.getMessage());
                 topProgressBar.setVisibility(View.GONE);
-                Toast.makeText(ctx, requestName + " out failed!", Toast.LENGTH_LONG).show();
+                Toast.makeText(ctx, requestName + " failed!", Toast.LENGTH_LONG).show();
             }
         };
     }
+
+
 
     public interface RefreshButtonListener{
         void refreshButtonClicked();

@@ -1,28 +1,32 @@
 package com.easycredit.data.model;
 
+import java.util.List;
+
 /**
  * A user of EasyCredit
  */
 public final class EasyCreditUser {
 
-    private final String userId;
+    private final String id;
     private final String email;
-    private final String displayName;
+    private final String name;
     private final String phone;
+    private final List<UserTransaction> transactions;
 
-    public EasyCreditUser(String userId, String email, String displayName, String phone) {
-        this.userId = userId;
+    public EasyCreditUser(String id, String email, String name, String phone, List<UserTransaction> transactions) {
+        this.id = id;
         this.email = email;
-        this.displayName = displayName;
+        this.name = name;
         this.phone = phone;
+        this.transactions = transactions;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getId() {
+        return id;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
 
     public String getEmail() {
@@ -31,5 +35,9 @@ public final class EasyCreditUser {
 
     public String getPhone() {
         return phone;
+    }
+
+    public List<UserTransaction> getTransactions() {
+        return transactions;
     }
 }
