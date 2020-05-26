@@ -19,4 +19,5 @@
 
     <!--    Menu items  -->
     <string name="sign_out_menu_item">Sign out</string>
+    <string name="send_dough">Send some dough!</string>
 </resources>
