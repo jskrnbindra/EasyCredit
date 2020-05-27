@@ -14,9 +14,19 @@
     <string name="signup_func_key">"AES7dO0IYSGe2SDoe5auPWaOYAPavt8FbJBUc2uEq71SyUloTdaOdA=="</string>
     <string name="logout_func_key">"26zuwoaFcdLwA61WG9eFCZALtuHasKbCFVHMuC8PaCtRcOHYL2GWJA=="</string>
     <string name="users_func_key">"c2cYeYyXD3x0fUcvEPjxp5NvlFIxjrQREOJNUhzTRPBWBfcmoAqpPQ=="</string>
+    <string name="transactions_func_key">"Tr5nH/PajJloTfSrV6grmqZvzHb/SMUWSUiQZgfZagKgp1yDa2/jWw=="</string>
     <string name="user_id_extra">"com.easycredit.userId"</string>
     <string name="session_id_extra">"com.easycredit.sessionId"</string>
+    <string name="send_dough">Send some dough!</string>
+    <string name="rzp_key_id">rzp_live_xAq5K7pZ5frkUp</string>
+    <string name="rzp_key_secret">giDHTRPoHisu6xBibbLtJxul</string>
+    <string name="payment_link_instruction">"Check your texts for a payment link we've just sent you.
+        Use the link to send money from your credit card to {beneficiary}. Additionally you can also
+        find the link in your email."</string>
+    <string name="beneficiary_placeholder">{beneficiary}</string>
+    <string name="rzp_base_url">"https://api.razorpay.com/v1"</string>
 
     <!--    Menu items  -->
     <string name="sign_out_menu_item">Sign out</string>
+    <string name="rzp_auth_header">Basic cnpwX2xpdmVfeEFxNUs3cFo1ZnJrVXA6Z2lESFRSUG9IaXN1NnhCaWJiTHRKeHVs</string>
 </resources>
