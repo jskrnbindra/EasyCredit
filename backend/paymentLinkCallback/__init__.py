@@ -39,7 +39,8 @@ def logged_in(user):
 
 def get_user_by(phone):
     logging.info(f'Getting user by phone: {phone}')
-    return users.find_one({'phone': phone})
+    usr = users.find_one({'phone': phone})
+    return stringify_id(usr)
 
 def stringify_id(obj):
     obj_id = str(obj['_id'])
@@ -73,10 +74,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info(f'razorpay_invoice_id -> {link_id}')
     logging.info(f'razorpay_invoice_receipt -> {receipt}')
 
-    from_user_id, to_user_id = receipt.split('-')
+    from_user_phone, to_user_phone = receipt.split('-')
 
-    from_user = get_user(from_user_id)
-    to_user = get_user(to_user_id)
+    from_user = get_user_by(from_user_phone)
+    to_user = get_user_by(to_user_phone)
 
     if not (from_user and to_user):
         logging.error('This is not expected. User in the receipt does not exist.')
