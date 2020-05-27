@@ -74,7 +74,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info(f'razorpay_invoice_id -> {link_id}')
     logging.info(f'razorpay_invoice_receipt -> {receipt}')
 
-    from_user_phone, to_user_phone = receipt.split('-')
+    from_user_phone, to_user_phone, timestamp = receipt.split('-')
 
     from_user = get_user_by(from_user_phone)
     to_user = get_user_by(to_user_phone)
