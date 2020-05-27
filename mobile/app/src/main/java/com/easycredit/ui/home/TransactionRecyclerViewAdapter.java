@@ -43,7 +43,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Log.i(TAG, "onBindViewHolder: called");
+        Log.d(TAG, "onBindViewHolder: called");
 
         int amount = mTransactions.get(position).getAmount();
         int red = 0xFFFF0000;

@@ -22,10 +22,17 @@ import com.easycredit.data.Http;
 import com.easycredit.data.model.EasyCreditUser;
 import com.easycredit.data.model.UserTransaction;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,7 +42,20 @@ import java.util.List;
 public class TransactionsFragment extends Fragment implements HomeActivity.RefreshButtonListener {
 
     private static final String TAG = "TransactionsFragment";
-    private static final Gson GSON = new Gson();
+    private static Gson GSON;
+
+    static {
+        GsonBuilder builder = new GsonBuilder();
+
+        builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+            public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws
+                    JsonParseException {
+                return new Date(json.getAsJsonPrimitive().getAsLong());
+            }
+        });
+
+        GSON = builder.create();
+    }
 
     private Context ctx;
     private Http http;
