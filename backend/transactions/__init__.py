@@ -54,8 +54,8 @@ def get_user(id):
     logging.info(f'found {usr}')
     return stringify_id(usr)
 
-def create_transaction(from_user, to_user, amount):
-    logging.info(f'Starting new transaction')
+def create_transaction(from_user, to_user, amount, receipt, link_id):
+    logging.info(f'Starting new transaction receipt -> {receipt}')
     import time
     timestamp = int(time.time())
     
@@ -70,6 +70,8 @@ def create_transaction(from_user, to_user, amount):
         'amount': amount, 
         'timestamp': timestamp, 
         'beneficiaryId': usr_id,
+        'receipt': receipt,
+        'linkId': link_id,
         'beneficiaryName': usr_name,
         'status': 'STARTED'
     }
@@ -87,6 +89,8 @@ def create_transaction(from_user, to_user, amount):
         'amount': -amount, 
         'timestamp': timestamp, 
         'beneficiaryId': usr_id,
+        'receipt': receipt,
+        'linkId': link_id,
         'beneficiaryName': usr_name,
         'status': 'STARTED'
     }
@@ -99,6 +103,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     from_user_id = req.params.get('from_user')
     to_user_id = req.params.get('to_user')
     amount = req.params.get('amount')
+    receipt = req.params.get('receipt')
+    link_id = req.params.get('linkId')
     
     from_user = get_user(from_user_id)
     to_user = get_user(to_user_id)
@@ -106,5 +112,5 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if not (from_user and to_user):
         return response(BOTH_USERS_MUST_EXIST, 400)
     
-    txn = create_transaction(from_user, to_user, int(amount))   
+    txn = create_transaction(from_user, to_user, int(amount), receipt, link_id)
     return response(txn)
