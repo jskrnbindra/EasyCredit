@@ -85,6 +85,7 @@ public class HomeActivity extends AppCompatActivity {
         public void onClick(View v) {
             Intent sendMoneyIntent = new Intent(getApplicationContext(), SendMoneyActivity.class);
             sendMoneyIntent.putExtra(getString(R.string.user_id_extra), userId);
+            sendMoneyIntent.putExtra(getString(R.string.user_phone_extra), user.getPhone());
             startActivity(sendMoneyIntent);
         }
     };

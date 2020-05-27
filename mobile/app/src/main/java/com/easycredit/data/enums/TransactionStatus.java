@@ -14,8 +14,8 @@ public enum TransactionStatus {
     EXPIRED,
 
     /**
-     * The transaction has just started and payment link
-     * sending is in process.
+     * The transaction has started and payment link
+     * has been sent.
      */
     STARTED,
 
@@ -25,9 +25,9 @@ public enum TransactionStatus {
     LINK_SENT,
 
     /**
-     * Payment has been received.
+     * Payment has been received from payment link.
      */
-    PAYMENT_RECEIVED,
+    MIDWAY,
 
     /**
      * Cashgram sent but not redeemed yet.
