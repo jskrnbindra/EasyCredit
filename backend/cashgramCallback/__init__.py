@@ -105,7 +105,7 @@ def cashgram_redeemed(body):
     return response()
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    if not verification.verify_webhook(req.get_body(), 'JSON'):
+    if not verification.verify_webhook(json.dumps(req.get_json()), 'JSON'):
         return response(SIGNATURE_VALIDATION_FAILED, 401)
     
     body = req.get_json()
