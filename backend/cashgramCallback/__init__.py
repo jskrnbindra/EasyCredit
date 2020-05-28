@@ -44,7 +44,7 @@ users, sessions = db.users, db.sessions                   # Collections
 with open('/tmp/cf_pub_key.pem', 'w') as pub_key_file:
     pub_key_file.write(CF_PUBLIC_KEY)
 
-with open('/tmp/cf_pub_key.pem', 'rb') as pub_key_file:
+with open('/tmp/cf_pub_key.pem', 'r') as pub_key_file:
     CF_PUBLIC_KEY = pub_key_file.read()
 
 def response(body=SUCCESS, status_code=200):
