@@ -41,6 +41,12 @@ mongo = MongoClient(MONGO_CONN_STR)                       # Server
 db = mongo.easycredit                                     # Database
 users, sessions = db.users, db.sessions                   # Collections
 
+with open('/tmp/cf_pub_key.pem', 'w') as pub_key_file:
+    pub_key_file.write(CF_PUBLIC_KEY)
+
+with open('/tmp/cf_pub_key.pem', 'rb') as pub_key_file:
+    CF_PUBLIC_KEY = pub_key_file.read()
+
 def response(body=SUCCESS, status_code=200):
     return func.HttpResponse(json.dumps(body), status_code=status_code)
 
