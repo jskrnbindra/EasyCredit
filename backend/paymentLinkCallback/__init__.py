@@ -22,14 +22,11 @@ if 'CF_CLIENT_SECRET' not in env:
     logging.error('CF_CLIENT_SECRET string missing in environment')
 if 'CF_ACCOUNT' not in env:
     logging.error('CF_ACCOUNT string missing in environment')
-if 'CF_PUBLIC_KEY' not in env:
-    logging.error('CF_PUBLIC_KEY string missing in environment')
 
 MONGO_CONN_STR = env['MONGO_CONN_STR']
 CF_CLIENT_ID = env['CF_CLIENT_ID']
 CF_CLIENT_SECRET = env['CF_CLIENT_SECRET']
 CF_ACCOUNT = env['CF_ACCOUNT']
-CF_PUBLIC_KEY = env['CF_PUBLIC_KEY']
 
 SUCCESS={'message':'success'}
 INVALID_CREDS = {'message':'Invalid phone or password.'}
@@ -43,12 +40,8 @@ mongo = MongoClient(MONGO_CONN_STR)                       # Server
 db = mongo.easycredit                                     # Database
 users, sessions = db.users, db.sessions                   # Collections
 
-with open('/tmp/cf_pub_key.pem', 'w') as pub_key_file:
-    pub_key_file.write(CF_PUBLIC_KEY)
-
-with open('/tmp/cf_pub_key.pem', 'rb') as pub_key_file:
-    CF_PUBLIC_KEY = pub_key_file.read()
-
+with open('cf_public_key.pem') as pemfile:
+    CF_PUBLIC_KEY = pemfile.read()
 
 Payouts.init(CF_CLIENT_ID, CF_CLIENT_SECRET, CF_ACCOUNT, public_key=CF_PUBLIC_KEY)
 
@@ -110,7 +103,7 @@ def create_cashgram(user, receipt):
     assert usr_txns, 'Transaction should have existed before reaching here'
     amount = [txn for txn in filter(lambda txn: txn['receipt'] == receipt, usr_txns)][0]['amount']
     assert amount > 0, 'This amount can not be negative' 
-    expiry = datetime.datetime.now().strftime("%Y/%m/%d")
+    expiry = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime('%Y/%m/%d')
     try:
         created_cashgram = Cashgram.create_cashgram(
             cashgramId = receipt,
