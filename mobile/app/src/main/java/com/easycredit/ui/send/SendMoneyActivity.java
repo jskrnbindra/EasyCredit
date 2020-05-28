@@ -36,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +66,7 @@ public class SendMoneyActivity extends AppCompatActivity {
     public static Http http;
 
     private String userId;
+    private String userPhone;
     private EasyCreditUser beneficiary;
 
     private Button verifyButton;
@@ -170,7 +172,7 @@ public class SendMoneyActivity extends AppCompatActivity {
             sendingMoneyBox.setVisibility(View.VISIBLE);
             int amountToSend = parseInt(amountEditText.getText().toString());
             String remark = paymentRemark.getText().toString();
-            startTransaction(beneficiary, remark, amountToSend);
+            createAndSendPaymentLink(beneficiary, remark, amountToSend);
         }
     };
 
@@ -192,6 +194,7 @@ public class SendMoneyActivity extends AppCompatActivity {
 
         http = Http.getInstance(this);
         userId = getIntent().getStringExtra(getString(R.string.user_id_extra));
+        userPhone = getIntent().getStringExtra(getString(R.string.user_phone_extra));
 
         verifyButton = findViewById(R.id.verifyButton);
         sendButton = findViewById(R.id.sendButton);
@@ -227,10 +230,12 @@ public class SendMoneyActivity extends AppCompatActivity {
 
     private void createAndSendPaymentLink(EasyCreditUser beneficiary, String description, int amountToSend) {
         amountToSend *= 100;
+        String timestamp =  String.valueOf(new Date().getTime()).substring(0, 10);
+        String receipt = String.format("%s-%s-%s", userPhone, beneficiary.getPhone(), timestamp);
         String url = String.format("%s/invoices/", getString(R.string.rzp_base_url));
 
         RzpCreateLinkRequest createLinkRequest = new RzpCreateLinkRequest(amountToSend, description,
-                toCustomer(beneficiary));
+                toCustomer(beneficiary), receipt);
         JSONObject bodyJson = new JSONObject();
         try {
             bodyJson = new JSONObject(GSON.toJson(createLinkRequest));
@@ -252,16 +257,15 @@ public class SendMoneyActivity extends AppCompatActivity {
         http.add(request);
     }
 
-    private void startTransaction(EasyCreditUser beneficiary, String description, int amountToSend) {
-        String url = String.format("%s/transactions?code=%s&from_user=%s&to_user=%s&amount=%s",
+    private void startTransaction(EasyCreditUser beneficiary, int amountToSend, String linkId, String receipt) {
+        String url = String.format("%s/transactions?code=%s&from_user=%s&to_user=%s&amount=%s&receipt=%s&linkId=%s",
                 getString(R.string.base_url),
                 getString(R.string.transactions_func_key),
-                userId, beneficiary.getId(), amountToSend);
+                userId, beneficiary.getId(), amountToSend, receipt, linkId);
         JsonObjectRequest request = new JsonObjectRequest(url, null,
                 transactionStarted(), startTransactionRequestFailed(getApplicationContext(),
                 "startTransaction"));
         http.add(request);
-        createAndSendPaymentLink(beneficiary, description, amountToSend);
     }
 
     private RzpCustomer toCustomer(EasyCreditUser user)
@@ -300,6 +304,7 @@ public class SendMoneyActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d(TAG, "Transaction started -> " + response);
+                topProgressBar.setVisibility(View.INVISIBLE);
             }
         };
     }
@@ -326,7 +331,19 @@ public class SendMoneyActivity extends AppCompatActivity {
                 Log.d(TAG, "payment link sent -> " + response);
                 sendingSms.setVisibility(View.GONE);
                 smsSent.setVisibility(View.VISIBLE);
-                topProgressBar.setVisibility(View.INVISIBLE);
+                String linkId = "not-expected";
+                String receipt = "not-expected";
+                int amountToSend = 0;
+                try {
+                    linkId = response.getString("id");
+                    receipt = response.getString("receipt");
+                    amountToSend = response.getInt("amount");
+                } catch (JSONException e) {
+                    Log.e(TAG, "onResponse: Unexpected response from RazorPay");
+                    e.printStackTrace();
+                }
+
+                startTransaction(beneficiary, amountToSend/100, linkId, receipt);
             }
         };
     }
