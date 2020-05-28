@@ -230,7 +230,8 @@ public class SendMoneyActivity extends AppCompatActivity {
 
     private void createAndSendPaymentLink(EasyCreditUser beneficiary, String description, int amountToSend) {
         amountToSend *= 100;
-        String receipt = String.format("%s-%s-%s", userPhone, beneficiary.getPhone(), new Date().getTime());
+        String timestamp =  String.valueOf(new Date().getTime()).substring(0, 10);
+        String receipt = String.format("%s-%s-%s", userPhone, beneficiary.getPhone(), timestamp);
         String url = String.format("%s/invoices/", getString(R.string.rzp_base_url));
 
         RzpCreateLinkRequest createLinkRequest = new RzpCreateLinkRequest(amountToSend, description,
