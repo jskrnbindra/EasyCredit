@@ -36,7 +36,6 @@ BOTH_USERS_MUST_EXIST = {'message':'Both participatingusers must exist.'}
 SOMETHING_IS_WRONG = {'message':"Something's wrong."}
 SIGNATURE_VALIDATION_FAILED = {'message': 'Signature validation failed.'}
 
-Payouts.init(CF_CLIENT_ID, CF_CLIENT_SECRET, CF_ACCOUNT, public_key=CF_PUBLIC_KEY)
 mongo = MongoClient(MONGO_CONN_STR)                       # Server
 db = mongo.easycredit                                     # Database
 users, sessions = db.users, db.sessions                   # Collections
@@ -44,8 +43,11 @@ users, sessions = db.users, db.sessions                   # Collections
 with open('/tmp/cf_pub_key.pem', 'w') as pub_key_file:
     pub_key_file.write(CF_PUBLIC_KEY)
 
-with open('/tmp/cf_pub_key.pem', 'r') as pub_key_file:
+with open('/tmp/cf_pub_key.pem', 'rb') as pub_key_file:
     CF_PUBLIC_KEY = pub_key_file.read()
+
+Payouts.init(CF_CLIENT_ID, CF_CLIENT_SECRET, CF_ACCOUNT, public_key=CF_PUBLIC_KEY)
+
 
 def response(body=SUCCESS, status_code=200):
     return func.HttpResponse(json.dumps(body), status_code=status_code)
