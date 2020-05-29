@@ -25,6 +25,7 @@ import com.easycredit.data.Http;
 import com.easycredit.data.model.EasyCreditUser;
 import com.easycredit.data.model.RzpCreateLinkRequest;
 import com.easycredit.data.model.RzpCustomer;
+import com.easycredit.data.model.UserTransaction;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -36,7 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,8 +66,7 @@ public class SendMoneyActivity extends AppCompatActivity {
 
     public static Http http;
 
-    private String userId;
-    private String userPhone;
+    private EasyCreditUser user;
     private EasyCreditUser beneficiary;
 
     private Button verifyButton;
@@ -193,8 +193,14 @@ public class SendMoneyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_send_money);
 
         http = Http.getInstance(this);
-        userId = getIntent().getStringExtra(getString(R.string.user_id_extra));
-        userPhone = getIntent().getStringExtra(getString(R.string.user_phone_extra));
+        String userId = getIntent().getStringExtra(getString(R.string.user_id_extra));
+        String userPhone = getIntent().getStringExtra(getString(R.string.user_phone_extra));
+        String userName = getIntent().getStringExtra(getString(R.string.user_name_extra));
+        String userEmail = getIntent().getStringExtra(getString(R.string.user_email_extra));
+
+        user = new EasyCreditUser(userId, userEmail, userName, userPhone,
+                new ArrayList<UserTransaction>());
+
 
         verifyButton = findViewById(R.id.verifyButton);
         sendButton = findViewById(R.id.sendButton);
@@ -231,11 +237,11 @@ public class SendMoneyActivity extends AppCompatActivity {
     private void createAndSendPaymentLink(EasyCreditUser beneficiary, String description, int amountToSend) {
         amountToSend *= 100;
         String timestamp =  String.valueOf(new Date().getTime()).substring(0, 10);
-        String receipt = String.format("%s-%s-%s", userPhone, beneficiary.getPhone(), timestamp);
+        String receipt = String.format("%s-%s-%s", user.getPhone(), beneficiary.getPhone(), timestamp);
         String url = String.format("%s/invoices/", getString(R.string.rzp_base_url));
 
         RzpCreateLinkRequest createLinkRequest = new RzpCreateLinkRequest(amountToSend, description,
-                toCustomer(beneficiary), receipt);
+                new RzpCustomer(user.getName(), user.getEmail(), user.getPhone()), receipt);
         JSONObject bodyJson = new JSONObject();
         try {
             bodyJson = new JSONObject(GSON.toJson(createLinkRequest));
@@ -261,16 +267,11 @@ public class SendMoneyActivity extends AppCompatActivity {
         String url = String.format("%s/transactions?code=%s&from_user=%s&to_user=%s&amount=%s&receipt=%s&linkId=%s",
                 getString(R.string.base_url),
                 getString(R.string.transactions_func_key),
-                userId, beneficiary.getId(), amountToSend, receipt, linkId);
+                user.getId(), beneficiary.getId(), amountToSend, receipt, linkId);
         JsonObjectRequest request = new JsonObjectRequest(url, null,
                 transactionStarted(), startTransactionRequestFailed(getApplicationContext(),
                 "startTransaction"));
         http.add(request);
-    }
-
-    private RzpCustomer toCustomer(EasyCreditUser user)
-    {
-        return new RzpCustomer(user.getName(), user.getEmail(), user.getPhone());
     }
 
 

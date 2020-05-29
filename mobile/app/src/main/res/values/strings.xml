@@ -30,4 +30,6 @@
     <string name="sign_out_menu_item">Sign out</string>
     <string name="rzp_auth_header">Basic cnpwX2xpdmVfeEFxNUs3cFo1ZnJrVXA6Z2lESFRSUG9IaXN1NnhCaWJiTHRKeHVs</string>
     <string name="user_phone_extra">com.easycredit.userPhone</string>
+    <string name="user_email_extra">com.easycredit.userEmail</string>
+    <string name="user_name_extra">com.easycredit.userName</string>
 </resources>
