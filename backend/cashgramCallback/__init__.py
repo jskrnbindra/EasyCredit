@@ -84,7 +84,7 @@ def update_transaction_status(user, reference_id, new_status):
     users.update_one({'_id': ObjectId(user['id'])}, {'$set': {'transactions': usr_txns}})
 
 def cashgram_redeemed(body):
-    cashgram_id = body['cashgramid']
+    cashgram_id = body['cashgramId']
     reference_id = body['referenceId']
     
     logging.info(f'CashgramId -> {cashgram_id}')
