@@ -74,11 +74,11 @@ def get_user(id):
     logging.info(f'found {usr}')
     return stringify_id(usr)
 
-def update_transaction_status(user, reference_id, new_status):
+def update_transaction_status(user, receipt, new_status):
     usr_txns = user['transactions']
     assert usr_txns
     for txn in usr_txns:
-        if txn['referenceId'] == reference_id:
+        if txn['receipt'] == receipt:
             txn['status'] = new_status
             break
     users.update_one({'_id': ObjectId(user['id'])}, {'$set': {'transactions': usr_txns}})
@@ -99,8 +99,8 @@ def cashgram_redeemed(body):
         logging.error('This is not expected. User in the receipt does not exist.')
         return response(SOMETHING_IS_WRONG, 500)
 
-    update_transaction_status(from_user, reference_id, 'DONE')
-    update_transaction_status(to_user, reference_id, 'DONE')
+    update_transaction_status(from_user, cashgram_id, 'DONE')
+    update_transaction_status(to_user, cashgram_id, 'DONE')
     
     return response()
 
