@@ -3,11 +3,11 @@ import logging
 import os
 import azure.functions as func
 
+from urllib import parse
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from cashfree_sdk.payouts import Payouts
 from cashfree_sdk import verification
-
 # COMMON UTILS 
 
 env = os.environ
@@ -74,23 +74,23 @@ def get_user(id):
     logging.info(f'found {usr}')
     return stringify_id(usr)
 
-def update_transaction_status(user, referenceId, new_status):
+def update_transaction_status(user, receipt, new_status):
     usr_txns = user['transactions']
     assert usr_txns
     for txn in usr_txns:
-        if txn['referenceId'] == referenceId:
+        if txn['receipt'] == receipt:
             txn['status'] = new_status
             break
     users.update_one({'_id': ObjectId(user['id'])}, {'$set': {'transactions': usr_txns}})
 
 def cashgram_redeemed(body):
-    cashgramid = body['cashgramid']
-    referenceId = body['referenceId']
+    cashgram_id = body['cashgramId']
+    reference_id = body['referenceId']
     
-    logging.info(f'CashgramId -> {cashgramid}')
-    logging.info(f'referenceId -> {referenceId}')
+    logging.info(f'CashgramId -> {cashgram_id}')
+    logging.info(f'referenceId -> {reference_id}')
 
-    from_user_phone, to_user_phone, timestamp = cashgramid.split('-')
+    from_user_phone, to_user_phone, timestamp = cashgram_id.split('-')
 
     from_user = get_user_by(from_user_phone)
     to_user = get_user_by(to_user_phone)
@@ -99,21 +99,21 @@ def cashgram_redeemed(body):
         logging.error('This is not expected. User in the receipt does not exist.')
         return response(SOMETHING_IS_WRONG, 500)
 
-    update_transaction_status(from_user, referenceId, 'DONE')
-    update_transaction_status(to_user, referenceId, 'DONE')
+    update_transaction_status(from_user, cashgram_id, 'DONE')
+    update_transaction_status(to_user, cashgram_id, 'DONE')
     
     return response()
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    if not verification.verify_webhook(req.get_body(), 'JSON'):
+    payload = req.get_body().decode()
+    if not verification.verify_webhook(payload, payload_type='FORM'):
         return response(SIGNATURE_VALIDATION_FAILED, 401)
     
-    body = req.get_json()
-    logging.info(f"got info -> {body}")
-    event = body['event']
+    payload = dict((k, v if len(v) > 1 else v[0]) for k, v in parse.parse_qs(payload).items())
+    logging.info(f'got info -> {payload}')
+    event = payload['event']
 
     if event == 'CASHGRAM_REDEEMED':
-        return cashgram_redeemed(body)
-    
-    logging.info(f'Not interested in this event -> {event}')
+        return cashgram_redeemed(payload)
+    logging.info(f'Not interested in this {event} event yet.')
     return response()
