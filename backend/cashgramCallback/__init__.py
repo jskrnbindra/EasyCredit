@@ -1,5 +1,6 @@
 import json
 import logging
+import datetime
 import os
 import azure.functions as func
 
@@ -8,6 +9,8 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from cashfree_sdk.payouts import Payouts
 from cashfree_sdk import verification
+from twilio.rest import Client
+
 # COMMON UTILS 
 
 env = os.environ
@@ -19,11 +22,20 @@ if 'CF_CLIENT_SECRET' not in env:
     logging.error('CF_CLIENT_SECRET string missing in environment')
 if 'CF_ACCOUNT' not in env:
     logging.error('CF_ACCOUNT string missing in environment')
+if 'TWILIO_ACCOUNT_SID' not in env:
+    logging.error('TWILIO_ACCOUNT_SID string missing in environment')
+if 'TWILIO_AUTH_TOKEN' not in env:
+    logging.error('TWILIO_AUTH_TOKEN string missing in environment')
+if 'TWILIO_NUMBER' not in env:
+    logging.error('TWILIO_NUMBER string missing in environment')
 
 MONGO_CONN_STR = env['MONGO_CONN_STR']
 CF_CLIENT_ID = env['CF_CLIENT_ID']
 CF_CLIENT_SECRET = env['CF_CLIENT_SECRET']
 CF_ACCOUNT = env['CF_ACCOUNT']
+TWILIO_ACCOUNT_SID = env['TWILIO_ACCOUNT_SID']
+TWILIO_AUTH_TOKEN = env['TWILIO_AUTH_TOKEN']
+TWILIO_NUMBER = env['TWILIO_NUMBER']
 
 SUCCESS={'message':'success'}
 INVALID_CREDS = {'message':'Invalid phone or password.'}
@@ -32,6 +44,8 @@ ALREADY_EXISTS = {'message':'User with that phone number exists already.'}
 BOTH_USERS_MUST_EXIST = {'message':'Both participatingusers must exist.'}
 SOMETHING_IS_WRONG = {'message':"Something's wrong."}
 SIGNATURE_VALIDATION_FAILED = {'message': 'Signature validation failed.'}
+ACK_SMS_BODY = 'Transaction acknowledged! %s has received Rs. %s.00 sent by you via EasyCredit.'
+DUMMY_BANK_SMS_BODY = 'Dear Customer, Your a/c no. XXXXXXXX4436 is credited by Rs.%s.00 on %s. (Ref no 12345678903).'
 
 mongo = MongoClient(MONGO_CONN_STR)                       # Server
 db = mongo.easycredit                                     # Database
@@ -41,7 +55,7 @@ with open('cf_public_key.pem') as pemfile:
     CF_PUBLIC_KEY = pemfile.read()
 
 Payouts.init(CF_CLIENT_ID, CF_CLIENT_SECRET, CF_ACCOUNT, public_key=CF_PUBLIC_KEY)
-
+Twilio = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 def response(body=SUCCESS, status_code=200):
     return func.HttpResponse(json.dumps(body), status_code=status_code)
@@ -83,6 +97,23 @@ def update_transaction_status(user, receipt, new_status):
             break
     users.update_one({'_id': ObjectId(user['id'])}, {'$set': {'transactions': usr_txns}})
 
+def send_ack_sms(from_user, to_user, receipt):
+    usr_txns = to_user['transactions']
+    amount = [txn for txn in filter(lambda txn: txn['receipt'] == receipt, usr_txns)][0]['amount']
+    sms_body = ACK_SMS_BODY % (to_user['name'], amount)
+    sms_msg = Twilio.messages.create(body=sms_body, from_=TWILIO_NUMBER, to=f"+91{from_user['phone']}")
+    logging.info(f"SMS sent to {from_user['phone']}")
+    assert not sms_msg.error_code, 'SMS sending failed!'
+
+def send_dummy_bank_sms(from_user, to_user, receipt):
+    usr_txns = to_user['transactions']
+    amount = [txn for txn in filter(lambda txn: txn['receipt'] == receipt, usr_txns)][0]['amount']
+    timestamp = datetime.datetime.now().strftime('%d-%b-%Y %H:%M:%S')
+    sms_body = DUMMY_BANK_SMS_BODY % (amount, timestamp)
+    sms_msg = Twilio.messages.create(body=sms_body, from_=TWILIO_NUMBER, to=f"+91{to_user['phone']}")
+    logging.info(f"SMS sent to {to_user['phone']}")
+    assert not sms_msg.error_code, 'SMS sending failed!'
+
 def cashgram_redeemed(body):
     cashgram_id = body['cashgramId']
     reference_id = body['referenceId']
@@ -102,6 +133,8 @@ def cashgram_redeemed(body):
     update_transaction_status(from_user, cashgram_id, 'DONE')
     update_transaction_status(to_user, cashgram_id, 'DONE')
     
+    send_dummy_bank_sms(from_user, to_user, cashgram_id)
+    send_ack_sms(from_user, to_user, cashgram_id)
     return response()
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
