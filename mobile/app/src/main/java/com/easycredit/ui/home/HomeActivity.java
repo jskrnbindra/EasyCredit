@@ -179,8 +179,8 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d(this.getClass().toString(), "User fetched -> " +
                         user.getTransactions().get(0).getTimestamp().getTime());
                 String displayName = user.getName();
-                topProgressBar.setVisibility(View.GONE);
-                welcomeText.setText("Welcome back " + displayName + "!");
+                topProgressBar.setVisibility(View.INVISIBLE);
+                welcomeText.setText(displayName);
                 phoneText.setText("+91 " + user.getPhone());
             }
         };
@@ -207,7 +207,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(this.getClass().toString(), requestName + " failed: " + error.getMessage());
-                topProgressBar.setVisibility(View.GONE);
+                topProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(ctx, requestName + " failed!", Toast.LENGTH_LONG).show();
             }
         };
