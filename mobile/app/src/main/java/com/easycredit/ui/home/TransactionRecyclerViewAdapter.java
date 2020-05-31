@@ -28,6 +28,7 @@ import static android.text.format.DateUtils.isToday;
 public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<TransactionRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "TransactionRecyclerView";
+    private static final String RUPEE_SYMBOL = "₹";
 
     private final List<UserTransaction> mTransactions;
     private Context context;
@@ -49,8 +50,8 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         Log.d(TAG, "onBindViewHolder: called");
 
         int amount = mTransactions.get(position).getAmount();
-        int red = 0xFFFF0000;
-        int green = 0xFF00FF00;
+        int red = 0xFFEB683F;
+        int green = 0xFF78DA95;
         String beneficiaryName = mTransactions.get(position).getBeneficiaryName();
         String status = mTransactions.get(position).getStatus().name();
         Date timestamp = mTransactions.get(position).getTimestamp();
@@ -62,7 +63,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         holder.amount.setTextColor(amount < 0 ? red : green);
 
         holder.beneficiaryName.setText(beneficiaryName);
-        holder.amount.setText(String.valueOf(amount));
+        holder.amount.setText(putRupeeSymbol(amount));
         holder.timestamp.setText(timeString);
         holder.status.setText(status);
     }
@@ -70,6 +71,18 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
     @Override
     public int getItemCount() {
         return mTransactions.size();
+    }
+
+    private String putRupeeSymbol(int amount)
+    {
+        if (amount > -1)
+        {
+            return String.format("%s%s", RUPEE_SYMBOL, amount);
+        }
+        else
+        {
+            return String.format("- %s%s", RUPEE_SYMBOL, Math.abs(amount));
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

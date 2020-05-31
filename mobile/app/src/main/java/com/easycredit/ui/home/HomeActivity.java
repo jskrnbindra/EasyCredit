@@ -62,6 +62,7 @@ public class HomeActivity extends AppCompatActivity {
     private EasyCreditUser user;
 
     private TextView welcomeText;
+    private TextView phoneText;
     private static RefreshButtonListener refreshButtonListener;
 
 
@@ -75,8 +76,15 @@ public class HomeActivity extends AppCompatActivity {
 
             refreshButtonListener.refreshButtonClicked();
 
+            try {
+                // Just so that it feels like it got refreshed.
+                // Otherwise it's too fast and looks like the refresh isn't working.
+                Thread.sleep(700);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             refreshButton.setEnabled(true);
-            topProgressBar.setVisibility(View.GONE);
+            topProgressBar.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -114,6 +122,7 @@ public class HomeActivity extends AppCompatActivity {
         sessionId = intent.getStringExtra(getString(R.string.session_id_extra));
         topProgressBar = findViewById(R.id.progressBar);
         welcomeText = findViewById(R.id.welcome);
+        phoneText = findViewById(R.id.phoneTV);
         refreshButton = findViewById(R.id.refreshButton);
 
         populateUserDetails();
@@ -171,7 +180,8 @@ public class HomeActivity extends AppCompatActivity {
                         user.getTransactions().get(0).getTimestamp().getTime());
                 String displayName = user.getName();
                 topProgressBar.setVisibility(View.GONE);
-                welcomeText.setText(displayName);
+                welcomeText.setText("Welcome back " + displayName + "!");
+                phoneText.setText("+91 " + user.getPhone());
             }
         };
     }
