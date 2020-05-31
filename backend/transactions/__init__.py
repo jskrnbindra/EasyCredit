@@ -57,7 +57,7 @@ def get_user(id):
 def create_transaction(from_user, to_user, amount, receipt, link_id):
     logging.info(f'Starting new transaction receipt -> {receipt}')
     import time
-    timestamp = int(time.time())
+    timestamp = int(time.time()) * 1000
     
     # adding under to_user
     usr_txns = to_user['transactions'] if 'transactions' in to_user else []

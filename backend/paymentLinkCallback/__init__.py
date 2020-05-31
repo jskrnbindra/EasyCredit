@@ -10,6 +10,7 @@ from cashfree_sdk.payouts import Payouts
 from cashfree_sdk import verification
 from cashfree_sdk.payouts.cashgram import Cashgram
 from cashfree_sdk.exceptions.exceptions import AlreadyExistError
+from twilio.rest import Client
 
 # COMMON UTILS 
 
@@ -22,11 +23,21 @@ if 'CF_CLIENT_SECRET' not in env:
     logging.error('CF_CLIENT_SECRET string missing in environment')
 if 'CF_ACCOUNT' not in env:
     logging.error('CF_ACCOUNT string missing in environment')
+if 'TWILIO_ACCOUNT_SID' not in env:
+    logging.error('TWILIO_ACCOUNT_SID string missing in environment')
+if 'TWILIO_AUTH_TOKEN' not in env:
+    logging.error('TWILIO_AUTH_TOKEN string missing in environment')
+if 'TWILIO_NUMBER' not in env:
+    logging.error('TWILIO_NUMBER string missing in environment')
 
 MONGO_CONN_STR = env['MONGO_CONN_STR']
 CF_CLIENT_ID = env['CF_CLIENT_ID']
 CF_CLIENT_SECRET = env['CF_CLIENT_SECRET']
 CF_ACCOUNT = env['CF_ACCOUNT']
+TWILIO_ACCOUNT_SID = env['TWILIO_ACCOUNT_SID']
+TWILIO_AUTH_TOKEN = env['TWILIO_AUTH_TOKEN']
+TWILIO_NUMBER = env['TWILIO_NUMBER']
+
 
 SUCCESS={'message':'success'}
 INVALID_CREDS = {'message':'Invalid phone or password.'}
@@ -35,6 +46,7 @@ ALREADY_EXISTS = {'message':'User with that phone number exists already.'}
 BOTH_USERS_MUST_EXIST = {'message':'Both participatingusers must exist.'}
 SOMETHING_IS_WRONG = {'message':"Something's wrong."}
 SIGNATURE_VALIDATION_FAILED = {'message': 'Signature validation failed.'}
+SMS_BODY = '%s has sent you Rs. %s.00 via EasyCredit. Click on this link to receive the amount. %s'
 
 mongo = MongoClient(MONGO_CONN_STR)                       # Server
 db = mongo.easycredit                                     # Database
@@ -44,6 +56,7 @@ with open('cf_public_key.pem') as pemfile:
     CF_PUBLIC_KEY = pemfile.read()
 
 Payouts.init(CF_CLIENT_ID, CF_CLIENT_SECRET, CF_ACCOUNT, public_key=CF_PUBLIC_KEY)
+Twilio = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 def response(body=SUCCESS, status_code=200):
     return func.HttpResponse(json.dumps(body), status_code=status_code)
@@ -98,6 +111,14 @@ def add_reference_id(user, receipt, reference_id):
             break
     users.update_one({'_id': ObjectId(user['id'])}, {'$set': {'transactions': usr_txns}})
 
+def send_sms(from_user, to_user, receipt, cashgram_link):
+    usr_txns = to_user['transactions']
+    amount = [txn for txn in filter(lambda txn: txn['receipt'] == receipt, usr_txns)][0]['amount']
+    sms_body = SMS_BODY % (from_user['name'], amount, cashgram_link)
+    sms_msg = Twilio.messages.create(body=sms_body, from_=TWILIO_NUMBER, to=f"+91{to_user['phone']}")
+    logging.info(f"SMS sent to {to_user['phone']}")
+    assert not sms_msg.error_code, 'SMS sending failed!'
+
 def create_cashgram(user, receipt):
     usr_txns = user['transactions']
     assert usr_txns, 'Transaction should have existed before reaching here'
@@ -123,12 +144,13 @@ def create_cashgram(user, receipt):
     assert created_cashgram['subCode'] == '200', 'Cashgram creation failed'
     logging.info(f"Cashgram created -> {created_cashgram['data']['cashgramLink']}")
     
-    return created_cashgram['data']['referenceId']
+    return created_cashgram['data']
 
 def send_cashgram(from_user, to_user, receipt):
-    ref_id = create_cashgram(to_user, receipt)
-    add_reference_id(to_user, receipt, ref_id)
-    add_reference_id(from_user, receipt, ref_id)
+    cash_gram = create_cashgram(to_user, receipt)
+    send_sms(from_user, to_user, receipt, cash_gram['cashgramLink'])
+    add_reference_id(to_user, receipt, cash_gram['referenceId'])
+    add_reference_id(from_user, receipt, cash_gram['referenceId'])
  
 def main(req: func.HttpRequest) -> func.HttpResponse:
     link_id = req.params.get('razorpay_invoice_id')
