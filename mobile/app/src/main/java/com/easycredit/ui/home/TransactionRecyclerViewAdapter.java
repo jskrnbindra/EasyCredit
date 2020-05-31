@@ -18,6 +18,7 @@ import java.util.List;
 
 import static android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
 import static android.text.format.DateUtils.FORMAT_NO_YEAR;
+import static android.text.format.DateUtils.FORMAT_SHOW_TIME;
 import static android.text.format.DateUtils.formatDateTime;
 import static android.text.format.DateUtils.isToday;
 
@@ -29,6 +30,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
     private static final String TAG = "TransactionRecyclerView";
 
     private final List<UserTransaction> mTransactions;
+    private Context context;
 
     public TransactionRecyclerViewAdapter(Context ctx, List<UserTransaction> items) {
         mTransactions = items;
@@ -38,6 +40,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_transaction, parent, false);
+        context = parent.getContext().getApplicationContext();
         return new ViewHolder(view);
     }
 
@@ -51,9 +54,10 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         String beneficiaryName = mTransactions.get(position).getBeneficiaryName();
         String status = mTransactions.get(position).getStatus().name();
         Date timestamp = mTransactions.get(position).getTimestamp();
-        String relativeTime = formatDateTime(null, timestamp.getTime(),
+        String formattedDate = formatDateTime(context, timestamp.getTime(),
                 FORMAT_ABBREV_MONTH | FORMAT_NO_YEAR);
-        String timeString = isToday(timestamp.getTime()) ? "Today" : relativeTime;
+        String formattedTime = formatDateTime(context, timestamp.getTime(), FORMAT_SHOW_TIME);
+        String timeString = isToday(timestamp.getTime()) ? formattedTime + " today" : formattedDate;
 
         holder.amount.setTextColor(amount < 0 ? red : green);
 

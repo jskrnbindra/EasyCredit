@@ -3,6 +3,7 @@ package com.easycredit.ui.home;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +34,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -110,6 +113,7 @@ public class TransactionsFragment extends Fragment implements HomeActivity.Refre
     private Response.Listener<JSONObject> userFetched()
     {
         return new Response.Listener<JSONObject>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onResponse(JSONObject response) {
                 transactions.clear();
@@ -117,6 +121,13 @@ public class TransactionsFragment extends Fragment implements HomeActivity.Refre
                 EasyCreditUser user = GSON.fromJson(response.toString(), EasyCreditUser.class);
                 transactions.addAll(user.getTransactions() == null ?
                         new ArrayList<UserTransaction>() : user.getTransactions());
+                transactions.sort(new Comparator<UserTransaction>() {
+                    @Override
+                    public int compare(UserTransaction o1, UserTransaction o2) {
+                        long diff = o2.getTimestamp().getTime() - o1.getTimestamp().getTime();
+                        return diff >= 0 ? 1 : -1;
+                    }
+                });
 
                 transactionAdapter.notifyDataSetChanged();
             }

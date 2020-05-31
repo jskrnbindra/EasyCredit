@@ -167,7 +167,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 user = GSON.fromJson(response.toString(), EasyCreditUser.class);
-                Log.d(this.getClass().toString(), "User fetched -> " + user);
+                Log.d(this.getClass().toString(), "User fetched -> " +
+                        user.getTransactions().get(0).getTimestamp().getTime());
                 String displayName = user.getName();
                 topProgressBar.setVisibility(View.GONE);
                 welcomeText.setText(displayName);
