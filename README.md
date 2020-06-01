@@ -7,7 +7,7 @@ Prototype for an idea submitted in Microsoft Azure Hackathon 2020.
 - Watch the complete walkthrough [video](https://youtu.be/5glExt1-OMM).
 
 ### Update
-Submission of this prototype required to keep this repo public. Therefore every sensitive bit of sensitive information in this codebase has been either invalidated (credentials), rotated (keys) or made unavailable (cloud resources). To see this prototype in action refer to the [demo video on youtube](https://youtu.be/5glExt1-OMM) or reach out to me.
+Submission of this prototype required to keep this repo public. Therefore every sensitive bit of information in this codebase has been either invalidated (credentials), rotated (keys) or made unavailable (cloud resources). To see this prototype in action watch the [demo video on youtube](https://youtu.be/5glExt1-OMM) or reach out to me.
 
 
 ### Suggestions? Questions?
