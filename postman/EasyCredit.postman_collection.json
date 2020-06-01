@@ -1,0 +1,249 @@
+{
+	"info": {
+		"_postman_id": "6509e642-e859-49f3-85fa-f77958ed585d",
+		"name": "EasyCredit",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Sign up",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/signup?code=AES7dO0IYSGe2SDoe5auPWaOYAPavt8FbJBUc2uEq71SyUloTdaOdA==&email=gurjantjezzy@gmail.com&password=someb&name=Gurjant Singh&phone=9988255255",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"signup"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "AES7dO0IYSGe2SDoe5auPWaOYAPavt8FbJBUc2uEq71SyUloTdaOdA=="
+						},
+						{
+							"key": "email",
+							"value": "gurjantjezzy@gmail.com"
+						},
+						{
+							"key": "password",
+							"value": "someb"
+						},
+						{
+							"key": "name",
+							"value": "Gurjant Singh"
+						},
+						{
+							"key": "phone",
+							"value": "9988255255"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/login?code=varJN11XzED/ZyGtrFWfh0fTSmG7rDAl3KZG6G6aC/KlR0vQ/IUcRg==&password=someb&phone=9988255255",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"login"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "varJN11XzED/ZyGtrFWfh0fTSmG7rDAl3KZG6G6aC/KlR0vQ/IUcRg=="
+						},
+						{
+							"key": "password",
+							"value": "someb"
+						},
+						{
+							"key": "phone",
+							"value": "9988255255"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/logout?code=26zuwoaFcdLwA61WG9eFCZALtuHasKbCFVHMuC8PaCtRcOHYL2GWJA==&sessionId=somesessionid",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"logout"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "26zuwoaFcdLwA61WG9eFCZALtuHasKbCFVHMuC8PaCtRcOHYL2GWJA=="
+						},
+						{
+							"key": "sessionId",
+							"value": "somesessionid"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/users?code=c2cYeYyXD3x0fUcvEPjxp5NvlFIxjrQREOJNUhzTRPBWBfcmoAqpPQ==&phone=9988255277&id=5ece492e5dff600774cea1db",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "c2cYeYyXD3x0fUcvEPjxp5NvlFIxjrQREOJNUhzTRPBWBfcmoAqpPQ=="
+						},
+						{
+							"key": "phone",
+							"value": "9988255277"
+						},
+						{
+							"key": "id",
+							"value": "5ece492e5dff600774cea1db"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/transactions?code=Tr5nH/PajJloTfSrV6grmqZvzHb/SMUWSUiQZgfZagKgp1yDa2/jWw==&from_user=5ece497d5dff600774cea1dc&to_user=5ece492e5dff600774cea1db&amount=42&receipt=9988255255-9988255277-1590687593&linkId=somelinkidagain",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"transactions"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "Tr5nH/PajJloTfSrV6grmqZvzHb/SMUWSUiQZgfZagKgp1yDa2/jWw=="
+						},
+						{
+							"key": "from_user",
+							"value": "5ece497d5dff600774cea1dc"
+						},
+						{
+							"key": "to_user",
+							"value": "5ece492e5dff600774cea1db"
+						},
+						{
+							"key": "amount",
+							"value": "42"
+						},
+						{
+							"key": "receipt",
+							"value": "9988255255-9988255277-1590687593"
+						},
+						{
+							"key": "linkId",
+							"value": "somelinkidagain"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "paymentLinkCallback",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/paymentLinkCallback?razorpay_invoice_receipt=9988255255-9988255277-1590687593&razorpay_invoice_status=paid&razorpay_invoice_id=somelinkidagain",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"paymentLinkCallback"
+					],
+					"query": [
+						{
+							"key": "razorpay_invoice_receipt",
+							"value": "9988255255-9988255277-1590687593"
+						},
+						{
+							"key": "razorpay_invoice_status",
+							"value": "paid"
+						},
+						{
+							"key": "razorpay_invoice_id",
+							"value": "somelinkidagain"
+						},
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cashgramCallback",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/cashgramCallback",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"cashgramCallback"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "8f558301-8900-4f2b-92e7-0a960f422ff9",
+			"key": "host",
+			"value": "https://easycredit.azurewebsites.com",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
