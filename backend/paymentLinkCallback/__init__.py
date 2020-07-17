@@ -114,6 +114,7 @@ def add_reference_id(user, receipt, reference_id):
 def send_sms(from_user, to_user, receipt, cashgram_link):
     usr_txns = to_user['transactions']
     amount = [txn for txn in filter(lambda txn: txn['receipt'] == receipt, usr_txns)][0]['amount']
+    amount *= .9825
     sms_body = SMS_BODY % (from_user['name'], amount, cashgram_link)
     sms_msg = Twilio.messages.create(body=sms_body, from_=TWILIO_NUMBER, to=f"+91{to_user['phone']}")
     logging.info(f"SMS sent to {to_user['phone']}")
@@ -123,7 +124,8 @@ def create_cashgram(user, receipt):
     usr_txns = user['transactions']
     assert usr_txns, 'Transaction should have existed before reaching here'
     amount = [txn for txn in filter(lambda txn: txn['receipt'] == receipt, usr_txns)][0]['amount']
-    assert amount > 0, 'This amount can not be negative' 
+    assert amount > 0, 'This amount can not be negative'
+    amount *= .9825
     expiry = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime('%Y/%m/%d')
     try:
         created_cashgram = Cashgram.create_cashgram(
